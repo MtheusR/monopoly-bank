@@ -30,23 +30,23 @@ export const UserCard: React.FC<UserCardProps> = ({
 		// biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
 		<div
 			onClick={onSelect}
-			className={`flex flex-row items-center border-2 rounded-xl p-2 gap-2 transition-all cursor-pointer min-w-64 max-w-72 ${getCardColor()}`}
+			className={`flex flex-row items-center border-2 rounded-xl p-2 gap-2 transition-all cursor-pointer min-w-[180px] md:min-w-[220px] lg:min-w-[250px] max-w-full ${getCardColor()}`}
 		>
 			<Avatar
 				src={user}
 				alt="avatar"
 				className="border-2 border-principal-6 outline-none"
 				variant="rounded"
-				size="xl"
+				size="lg"
 				placeholder={undefined}
 				onPointerEnterCapture={undefined}
 				onPointerLeaveCapture={undefined}
 			/>
 			<div className="flex w-full flex-col gap-1 text-white">
-				<p>{name}</p>
+				<p className="text-sm md:text-base lg:text-lg">{name}</p>
 				<div className="flex flex-row items-center bg-principal-0 rounded-lg p-1 gap-2">
-					<img src={coins} className="max-w-5" alt="Moedas" />
-					<p>{balance}</p>
+					<img src={coins} className="w-4 md:w-5 lg:w-6" alt="Moedas" />
+					<p className="text-xs md:text-sm lg:text-base">{balance}</p>
 				</div>
 			</div>
 		</div>

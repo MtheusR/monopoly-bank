@@ -5,7 +5,7 @@ import { IoMdAdd } from 'react-icons/io';
 import { RiSubtractFill } from 'react-icons/ri';
 import { BiTransferAlt } from 'react-icons/bi';
 import { UserCard } from './UserCardComponent';
-import logo from './assets/monopoly-logo.svg'; // Ajuste o caminho conforme necessário
+import logo from './assets/monopoly-logo.svg';
 import { NewGameComponent } from './NewGameComponent';
 
 interface Player {
@@ -36,18 +36,8 @@ function App() {
 		}).format(value);
 	};
 
-	// const getSelectionColor = (name: string) => {
-	// 	const selectedArray = Array.from(selectedUsers);
-	// 	return selectedArray.indexOf(name) === 0
-	// 		? 'verde'
-	// 		: selectedArray.indexOf(name) === 1
-	// 			? 'vermelho'
-	// 			: 'padrao';
-	// };
-
 	const getSelectionColor = (name: string) => {
 		const selectedArray = Array.from(selectedUsers);
-
 		if (selectedArray.length === 1) {
 			return selectedArray[0] === name ? 'azul' : 'padrao';
 		}
@@ -58,67 +48,33 @@ function App() {
 					? 'vermelho'
 					: 'padrao';
 		}
-
 		return 'padrao';
-	};
-
-	// Adiciona o valor ao saldo do jogador selecionado
-	const handleAdd = () => {
-		const value = Number.parseFloat(inputValue);
-		if (!Number.isNaN(value) && selectedUsers.size === 1) {
-			const playerName = Array.from(selectedUsers)[0];
-			setPlayers((prevPlayers) =>
-				prevPlayers.map((player) =>
-					player.name === playerName ? { ...player, balance: player.balance + value } : player,
-				),
-			);
-			setInputValue('');
-		}
-	};
-
-	// Subtrai o valor do saldo do jogador selecionado
-	const handleSubtract = () => {
-		const value = Number.parseFloat(inputValue);
-		if (!Number.isNaN(value) && selectedUsers.size === 1) {
-			const playerName = Array.from(selectedUsers)[0];
-			setPlayers((prevPlayers) =>
-				prevPlayers.map((player) =>
-					player.name === playerName ? { ...player, balance: player.balance - value } : player,
-				),
-			);
-		}
-		setInputValue('');
 	};
 
 	const handleRestart = () => {
 		setPlayers((prevPlayers) => prevPlayers.map((player) => ({ ...player, balance: 0 })));
-		setSelectedUsers(new Set()); // Desativa todas as seleções
+		setSelectedUsers(new Set());
 		setInputValue('');
 	};
 
-	// Transfere o valor entre os jogadores selecionados
-	const handleTransfer = () => {
-		const value = Number.parseFloat(inputValue);
-		if (!Number.isNaN(value) && selectedUsers.size === 2) {
-			const [fromPlayerName, toPlayerName] = Array.from(selectedUsers).reverse(); // Inverte a ordem dos jogadores
-			setPlayers((prevPlayers) =>
-				prevPlayers.map((player) => {
-					if (player.name === fromPlayerName) {
-						return { ...player, balance: player.balance - value };
-					}
-					if (player.name === toPlayerName) {
-						return { ...player, balance: player.balance + value };
-					}
-					return player;
-				}),
-			);
-		}
+	const handleTransfer = (amount: number) => {
+		const selectedArray = Array.from(selectedUsers);
+		if (selectedArray.length !== 2 || Number.isNaN(amount)) return;
+
+		const [payer, receiver] = selectedArray;
+		setPlayers((prevPlayers) =>
+			prevPlayers.map((player) => {
+				if (player.name === payer) return { ...player, balance: player.balance - amount };
+				if (player.name === receiver) return { ...player, balance: player.balance + amount };
+				return player;
+			}),
+		);
 		setInputValue('');
+		setSelectedUsers(new Set());
 	};
 
 	return (
 		<div className="flex flex-col items-center p-6 h-full min-h-screen bg-principal-1 gap-6">
-			{/* Topbar */}
 			<div className="flex w-full justify-between items-center">
 				<button
 					onClick={handleOpen}
@@ -127,7 +83,7 @@ function App() {
 				>
 					<MdOutlineWrapText />
 				</button>
-				<img src={logo} alt="Logo Monopoly" />
+				<img src={logo} alt="Logo Monopoly" className="h-12" />
 				<button
 					onClick={handleRestart}
 					type="button"
@@ -137,46 +93,41 @@ function App() {
 				</button>
 			</div>
 
-			{/* Novo Jogo */}
 			<NewGameComponent open={open} handleOpen={handleOpen} setPlayers={setPlayers} />
 
-			{/* Transferência */}
-			<div className="flex flex-col text-center gap-4">
-				<h2 className="text-principal-6">Transferência</h2>
-				<div className="flex flex-col gap-2">
-					<input
-						className="bg-principal-4 rounded-lg border-b-2 focus:bg-principal-5 px-2 py-1 text-xl text-white border-principal-6 focus:outline-none"
-						type="text"
-						value={inputValue}
-						onChange={(e) => setInputValue(e.target.value)}
-					/>
-					<div className="flex gap-2">
-						<button
-							type="button"
-							className="bg-verde p-1 px-3 rounded-lg text-2xl hover:scale-105 transition-all text-white shadow-inner shadow-green-400 focus:outline-none focus:scale-105"
-							onClick={handleAdd}
-						>
-							<IoMdAdd />
-						</button>
-						<button
-							type="button"
-							className="flex justify-center bg-orange-500 w-full p-1 px-3 rounded-lg text-2xl hover:scale-105 transition-all text-white shadow-inner shadow-orange-400 focus:outline-none focus:scale-105"
-							onClick={handleTransfer}
-						>
-							<BiTransferAlt />
-						</button>
-						<button
-							type="button"
-							className="bg-vermelho p-1 px-3 rounded-lg text-2xl hover:scale-105 transition-all text-white shadow-inner shadow-red-400 focus:outline-none focus:scale-105"
-							onClick={handleSubtract}
-						>
-							<RiSubtractFill />
-						</button>
-					</div>
+			<div className="flex flex-col text-center gap-4 w-full mt-6 max-w-lg">
+				<input
+					className="bg-principal-4 rounded-lg border-b-2 px-2 py-1 text-xl text-white text-center border-principal-6 focus:outline-none focus:bg-principal-5"
+					type="text"
+					value={inputValue}
+					onChange={(e) => setInputValue(e.target.value)}
+				/>
+				<div className="flex gap-4">
+					<button
+						type="button"
+						onClick={() => handleTransfer(Number(inputValue))}
+						className="bg-verde p-2 rounded-lg text-2xl text-white hover:scale-105 transition-all"
+					>
+						<IoMdAdd />
+					</button>
+					<button
+						type="button"
+						onClick={() => handleTransfer(Number(inputValue))}
+						className="flex justify-center bg-orange-500 p-2 w-full rounded-lg text-2xl text-white text-center hover:scale-105 transition-all"
+					>
+						<BiTransferAlt />
+					</button>
+					<button
+						type="button"
+						onClick={() => handleTransfer(-Number(inputValue))}
+						className="bg-vermelho p-2 rounded-lg text-2xl text-white hover:scale-105 transition-all"
+					>
+						<RiSubtractFill />
+					</button>
 				</div>
 			</div>
 
-			<div className="flex flex-col gap-4 bg-principal-0 rounded-lg p-4">
+			<div className="flex flex-wrap gap-4 justify-center md:justify-center">
 				{players.map((player) => (
 					<UserCard
 						key={player.name}
