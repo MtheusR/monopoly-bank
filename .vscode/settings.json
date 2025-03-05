@@ -1,0 +1,17 @@
+{
+	"editor.defaultFormatter": "biomejs.biome",
+	"files.exclude": {
+		".gitignore": true,
+		"**/eslint.config.js": true,
+		"**/node_modules": true,
+		"**/vite.config.js": true,
+		"**/vite.config.ts": true,
+		"src/vite-env.d.ts": true,
+		"**/postcss.config.js": true,
+		"**/tsconfig.app.json": true,
+		"**/tsconfig.json": true,
+		"**/tsconfig.node.json": true
+	},
+	"editor.formatOnSave": true,
+	"errorLens.onSave": true
+}
