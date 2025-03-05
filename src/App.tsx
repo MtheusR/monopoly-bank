@@ -51,26 +51,61 @@ function App() {
 		return 'padrao';
 	};
 
-	const handleRestart = () => {
-		setPlayers((prevPlayers) => prevPlayers.map((player) => ({ ...player, balance: 0 })));
+	// Adiciona o valor ao saldo do jogador selecionado
+	const handleAdd = () => {
+		const value = Number.parseFloat(inputValue);
+		if (!Number.isNaN(value) && selectedUsers.size === 1) {
+			const playerName = Array.from(selectedUsers)[0];
+			setPlayers((prevPlayers) =>
+				prevPlayers.map((player) =>
+					player.name === playerName ? { ...player, balance: player.balance + value } : player,
+				),
+			);
+			setSelectedUsers(new Set());
+			setInputValue('');
+		}
+	};
+
+	// Subtrai o valor do saldo do jogador selecionado
+	const handleSubtract = () => {
+		const value = Number.parseFloat(inputValue);
+		if (!Number.isNaN(value) && selectedUsers.size === 1) {
+			const playerName = Array.from(selectedUsers)[0];
+			setPlayers((prevPlayers) =>
+				prevPlayers.map((player) =>
+					player.name === playerName ? { ...player, balance: player.balance - value } : player,
+				),
+			);
+		}
 		setSelectedUsers(new Set());
 		setInputValue('');
 	};
 
-	const handleTransfer = (amount: number) => {
-		const selectedArray = Array.from(selectedUsers);
-		if (selectedArray.length !== 2 || Number.isNaN(amount)) return;
-
-		const [payer, receiver] = selectedArray;
-		setPlayers((prevPlayers) =>
-			prevPlayers.map((player) => {
-				if (player.name === payer) return { ...player, balance: player.balance - amount };
-				if (player.name === receiver) return { ...player, balance: player.balance + amount };
-				return player;
-			}),
-		);
+	const handleRestart = () => {
+		setPlayers((prevPlayers) => prevPlayers.map((player) => ({ ...player, balance: 0 })));
+		setSelectedUsers(new Set()); // Desativa todas as seleções
 		setInputValue('');
+	};
+
+	// Transfere o valor entre os jogadores selecionados
+	const handleTransfer = () => {
+		const value = Number.parseFloat(inputValue);
+		if (!Number.isNaN(value) && selectedUsers.size === 2) {
+			const [fromPlayerName, toPlayerName] = Array.from(selectedUsers).reverse(); // Inverte a ordem dos jogadores
+			setPlayers((prevPlayers) =>
+				prevPlayers.map((player) => {
+					if (player.name === fromPlayerName) {
+						return { ...player, balance: player.balance - value };
+					}
+					if (player.name === toPlayerName) {
+						return { ...player, balance: player.balance + value };
+					}
+					return player;
+				}),
+			);
+		}
 		setSelectedUsers(new Set());
+		setInputValue('');
 	};
 
 	return (
@@ -105,21 +140,21 @@ function App() {
 				<div className="flex gap-4">
 					<button
 						type="button"
-						onClick={() => handleTransfer(Number(inputValue))}
+						onClick={handleAdd}
 						className="bg-verde p-2 rounded-lg text-2xl text-white hover:scale-105 transition-all"
 					>
 						<IoMdAdd />
 					</button>
 					<button
 						type="button"
-						onClick={() => handleTransfer(Number(inputValue))}
+						onClick={handleTransfer}
 						className="flex justify-center bg-orange-500 p-2 w-full rounded-lg text-2xl text-white text-center hover:scale-105 transition-all"
 					>
 						<BiTransferAlt />
 					</button>
 					<button
 						type="button"
-						onClick={() => handleTransfer(-Number(inputValue))}
+						onClick={handleSubtract}
 						className="bg-vermelho p-2 rounded-lg text-2xl text-white hover:scale-105 transition-all"
 					>
 						<RiSubtractFill />

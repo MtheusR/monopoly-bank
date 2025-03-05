@@ -18,8 +18,7 @@ export const UserCard: React.FC<UserCardProps> = ({
 	onSelect,
 }) => {
 	const getCardColor = () => {
-		if (!isSelected)
-			return 'bg-principal-5 border-principal-6 hover:scale-105 hover:border-blue-gray-50';
+		if (!isSelected) return 'bg-principal-5 border-principal-6'; // hover:border-blue-gray-50 hover:scale-105
 		if (selectionColor === 'verde') return 'bg-principal-5 border-green-400 scale-105';
 		if (selectionColor === 'vermelho') return 'bg-principal-5 border-red-400 scale-105';
 		if (selectionColor === 'azul') return 'bg-principal-5 border-blue-400 scale-105';
